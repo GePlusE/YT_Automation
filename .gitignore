@@ -16,8 +16,8 @@ test*.json
 client_secrets.json
 credentials.json
 mycreds.json
-player_dim*.json
-
+client_secret.json
+token.pickle
 ############## BEST PRACTICE .gitignore from https://github.com/github/gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
