@@ -1,0 +1,8 @@
+#!/bin/bash
+cd /home/pi/CodeProjects/YT_Automation
+git add .
+git commit -m "auto push raspberry"
+git push origin main
+
+
+
