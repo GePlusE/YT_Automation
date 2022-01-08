@@ -24,6 +24,7 @@ video_ids.csv
 __pycache__/
 *.py[cod]
 *$py.class
+log.txt
 
 # C extensions
 *.so
