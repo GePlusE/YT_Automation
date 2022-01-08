@@ -95,3 +95,4 @@ for sub_id in sub_ids:
     with open("video_ids.csv", "w") as f:
         writer = csv.writer(f, delimiter=";", quotechar="'")
         writer.writerows(old_vid_ids)
+# test
