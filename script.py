@@ -7,6 +7,7 @@ from google.auth import credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from time import sleep
 
 credentials = None
 
@@ -81,7 +82,11 @@ for sub_id in sub_ids:
     # loop throuh videos and like + add new ones to set
     for vid_id in vid_ids:
         if vid_id not in old_vid_ids:
-            youtube.videos().rate(rating="like", id=vid_id[0]).execute()
+            try:
+                youtube.videos().rate(rating="like", id=vid_id[0]).execute()
+            except:
+                continue
+
             old_vid_ids.update([vid_id])
 
     # write new set to csv
