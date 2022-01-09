@@ -86,6 +86,7 @@ for sub_id in sub_ids:
         if vid_id not in old_vid_ids:
             try:
                 youtube.videos().rate(rating="like", id=vid_id[0]).execute()
+                sleep(1)
             except:
                 continue
 
