@@ -1,14 +1,21 @@
-
+import csv
+import json
 import os
 import pickle
-import csv
-from re import sub
+import re
+import requests
 
+from bs4 import BeautifulSoup
 from google.auth import credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from re import sub
 from time import sleep
+
+# Add channel url to list if videos should be liked
+url_list = ["https://youtube.com/c/freerideflo", "https://www.youtube.com/c/JasperJauch"]
+
 
 credentials = None
 
@@ -23,6 +30,7 @@ flow = InstalledAppFlow.from_client_secrets_file(
 
 # If there are no valid credentials available, then either refresh the token or log in.
 if not credentials or not credentials.valid:
+    print("credentials don't exist or are not valid")
     flow = InstalledAppFlow.from_client_secrets_file(
         "client_secret.json", scopes=["https://www.googleapis.com/auth/youtube"]
     )
@@ -35,6 +43,7 @@ if not credentials or not credentials.valid:
         print("Saving Credentials for Future Use...")
         pickle.dump(credentials, f)
     if credentials and credentials.expired and credentials.refresh_token:
+        print("credentials expired")
         credentials.refresh(Request())
     else:
         flow = InstalledAppFlow.from_client_secrets_file(
@@ -53,15 +62,16 @@ if not credentials or not credentials.valid:
 
 youtube = build("youtube", "v3", credentials=credentials)
 
-# Collect subscripted channel ids
-sub_ids = []
-request = youtube.subscriptions().list(part="snippet", maxResults=50, mine=True)
-response = request.execute()
-for item in response["items"]:
-    sub_ids.append(item["snippet"]["resourceId"]["channelId"])
+# get channel_ids from channel_urls
+id_set = set()
+for url in url_list:
+    soup = BeautifulSoup(requests.get(url, cookies={'CONSENT': 'YES+1'}).text, "html.parser")
+    data = re.search(r"var ytInitialData = ({.*});", str(soup.prettify())).group(1)
+    json_data = json.loads(data)
 
-# # only for testing purpose
-# sub_ids = ["UCCezIgC97PvUuR4_gbFUs5g,UCEqCu7uFzlXaDKnfQeY5s-g"]
+    channel_id = json_data['header']['c4TabbedHeaderRenderer']['channelId']
+    id_set.add(channel_id)
+channel_ids = list(id_set)
 
 # load already liked video ids into set, to decrease amount of requests to YouTube
 with open("video_ids.csv", "r") as f:
@@ -69,10 +79,10 @@ with open("video_ids.csv", "r") as f:
     ids = list(reader)
 old_vid_ids = set([tuple(x) for x in ids])
 
-# loop through subscriped channels to get video ids
-for sub_id in sub_ids:
+# loop through channels to get video ids
+for channel_id in channel_ids:
     vid_ids = []
-    request = youtube.channels().list(part="contentDetails", id=sub_id)
+    request = youtube.channels().list(part="contentDetails", id=channel_id)
     response = request.execute()
 
     # add playlist_id of latest uploads
@@ -91,12 +101,14 @@ for sub_id in sub_ids:
             video_id = item["contentDetails"]["videoId"]
             vid_ids.append((video_id, channel_id))
 
+
     # loop throuh videos and like + add new ones to set
     for vid_id in vid_ids:
         if vid_id not in old_vid_ids:
             try:
                 youtube.videos().rate(rating="like", id=vid_id[0]).execute()
-                sleep(1)
+                print("liked video")
+                sleep(0.5)
             except:
                 continue
 
@@ -106,3 +118,5 @@ for sub_id in sub_ids:
     with open("video_ids.csv", "w") as f:
         writer = csv.writer(f, delimiter=";", quotechar="'")
         writer.writerows(old_vid_ids)
+
+print("+++++++Done+++++++")
