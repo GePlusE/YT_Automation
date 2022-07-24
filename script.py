@@ -14,7 +14,13 @@ from re import sub
 from time import sleep
 
 # Add channel url to list if videos should be liked
-url_list = ["https://youtube.com/c/freerideflo", "https://www.youtube.com/c/JasperJauch"]
+url_list = [
+    "https://youtube.com/c/freerideflo",
+    "https://www.youtube.com/c/JasperJauch",
+    "https://www.youtube.com/c/KevinChromik",
+    "https://www.youtube.com/c/KalleHallden",
+    "https://www.youtube.com/c/MattJones"
+    ]
 
 
 credentials = None
