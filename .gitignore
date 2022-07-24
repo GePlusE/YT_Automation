@@ -18,7 +18,6 @@ credentials.json
 mycreds.json
 client_secret.json
 token.pickle
-video_ids.csv
 ############## BEST PRACTICE .gitignore from https://github.com/github/gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
