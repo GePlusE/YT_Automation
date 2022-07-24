@@ -22,7 +22,7 @@ url_list = [
     "https://www.youtube.com/c/MattJones"
     ]
 
-
+# only used once to get the credentials
 credentials = None
 
 # token.pickle stores the user's credentials from previously successful logins
