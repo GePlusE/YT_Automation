@@ -125,4 +125,3 @@ for channel_id in channel_ids:
         writer = csv.writer(f, delimiter=";", quotechar="'")
         writer.writerows(old_vid_ids)
 
-print("Done")
