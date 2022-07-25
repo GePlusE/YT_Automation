@@ -19,8 +19,8 @@ url_list = [
     "https://www.youtube.com/c/JasperJauch",
     "https://www.youtube.com/c/KevinChromik",
     "https://www.youtube.com/c/KalleHallden",
-    "https://www.youtube.com/c/MattJones"
-    ]
+    "https://www.youtube.com/c/MattJones",
+]
 
 # only used once to get the credentials
 credentials = None
@@ -71,11 +71,13 @@ youtube = build("youtube", "v3", credentials=credentials)
 # get channel_ids from channel_urls
 id_set = set()
 for url in url_list:
-    soup = BeautifulSoup(requests.get(url, cookies={'CONSENT': 'YES+1'}).text, "html.parser")
+    soup = BeautifulSoup(
+        requests.get(url, cookies={"CONSENT": "YES+1"}).text, "html.parser"
+    )
     data = re.search(r"var ytInitialData = ({.*});", str(soup.prettify())).group(1)
     json_data = json.loads(data)
 
-    channel_id = json_data['header']['c4TabbedHeaderRenderer']['channelId']
+    channel_id = json_data["header"]["c4TabbedHeaderRenderer"]["channelId"]
     id_set.add(channel_id)
 channel_ids = list(id_set)
 
@@ -107,20 +109,20 @@ for channel_id in channel_ids:
             video_id = item["contentDetails"]["videoId"]
             vid_ids.append((video_id, channel_id))
 
-
     # loop throuh videos and like + add new ones to set
     for vid_id in vid_ids:
         if vid_id not in old_vid_ids:
             try:
                 youtube.videos().rate(rating="like", id=vid_id[0]).execute()
-                print("liked video")
+                print(vid_id[1], vid_id[0])
                 sleep(0.5)
             except:
                 continue
-
             old_vid_ids.update([vid_id])
 
     # write new set to csv
     with open("video_ids.csv", "w") as f:
         writer = csv.writer(f, delimiter=";", quotechar="'")
         writer.writerows(old_vid_ids)
+
+print("Done")
