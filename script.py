@@ -4,6 +4,7 @@ import os
 import pickle
 import re
 import requests
+import time
 
 from bs4 import BeautifulSoup
 from google.auth import credentials
@@ -127,3 +128,7 @@ for channel_id in channel_ids:
         writer = csv.writer(f, delimiter=";", quotechar="'")
         writer.writerows(old_vid_ids)
 
+t = time.localtime()
+current_time = time.strftime("%H:%M:%S", t)
+print("+++done+++")
+print(current_time)
