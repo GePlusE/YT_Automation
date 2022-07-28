@@ -23,6 +23,7 @@ url_list = [
     "https://www.youtube.com/c/MattJones",
     "https://www.youtube.com/c/ImKibitz",
     "https://www.youtube.com/c/LetsGameItOut",
+    "https://www.youtube.com/c/MattDAvella",
 ]
 
 # only used once to get the credentials
